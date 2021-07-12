@@ -121,14 +121,22 @@ export UE4_ROOT=~/UnrealEngine_4.24
 选择root回车，输入sudo apt-get install xserver-xorg-input-all命令安装
 退出当前页面（Menu），输入命令reboot，重启后即可使用键盘鼠标
 
+- `sudo apt-get update`报错: The repository 'http://ppa.launchpad.net/gnome-terminator/ppa/ubuntu yakkety Release' does not have a Release file. [Solution](https://askubuntu.com/questions/940658/the-repository-http-ppa-launchpad-net-gnome-terminator-ppa-ubuntu-yakkety-rel)
+
 - 不论是server还是client都只有3FPS
 Editor->Preference->Performance->uncheck “use less cpu while in background”
 
 - 有的python包已经安装了，仍然显示找不到
 Carla仅支持Python3。很有可能是安装了Python2的包，再用pip3安装一遍就好了。
 
+[其他](https://carla.readthedocs.io/en/0.9.11/build_faq/)
+
 ## Docker 构建 CARLA 镜像
 [ref](https://blog.csdn.net/qwe900/article/details/116041960) 未做
 
 
 `make launch`: LogMaterial: Display: Missing cached shader map for material
+
+Fatal error: [File:/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/VulkanRHI/Private/VulkanUtil.cpp] [Line: 772] Result failed, VkResult=-4 at /home/xy/UnrealEngine_4.24/Engine/Source/Runtime/VulkanRHI/Private/VulkanMemory.cpp:2156 with error VK_ERROR_DEVICE_LOST 0x00007fdeed332129 libUE4Editor-VulkanRHI.so!VulkanRHI::FFenceManager::WaitForFence(VulkanRHI::FFence*, unsigned long long) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/VulkanRHI/Private/VulkanMemory.cpp:2156] 0x00007fdeed36ae4d libUE4Editor-VulkanRHI.so!FVulkanCommandBufferManager::WaitForCmdBuffer(FVulkanCmdBuffer*, float) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/VulkanRHI/Private/VulkanCommandBuffer.cpp:424] 0x00007fdeed356a99 libUE4Editor-VulkanRHI.so!FVulkanViewport::WaitForFrameEventCompletion() [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/VulkanRHI/Private/VulkanViewport.cpp:302] 0x00007fdeed35aaf6 libUE4Editor-VulkanRHI.so!FVulkanViewport::Present(FVulkanCommandListContext*, FVulkanCmdBuffer*, FVulkanQueue*, FVulkanQueue*, bool) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/VulkanRHI/Private/VulkanViewport.cpp:924] 0x00007fdeed33c281 libUE4Editor-VulkanRHI.so!FVulkanCommandListContext::RHIEndDrawingViewport(FRHIViewport*, bool, bool) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/VulkanRHI/Private/VulkanRHI.cpp:819] 0x00007fdf2dce9d16 libUE4Editor-RHI.so!FRHICommand<FRHICommandEndDrawingViewport, FRHICommandEndDrawingViewportString1859>::ExecuteAndDestruct(FRHICommandListBase&, FRHICommandListDebugContext&) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/RHI/Public/RHICommandList.h:726] 0x00007fdf2dc8c37e libUE4Editor-RHI.so!FRHICommandListExecutor::ExecuteInner_DoExecute(FRHICommandListBase&) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/RHI/Private/RHICommandList.cpp:356] 0x00007fdf2dcf86ab libUE4Editor-RHI.so!FExecuteRHIThreadTask::DoTask(ENamedThreads::Type, TRefCountPtr<FGraphEvent> const&) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/RHI/Private/RHICommandList.cpp:409] 0x00007fdf2dcf7d84 libUE4Editor-RHI.so!TGraphTask<FExecuteRHIThreadTask>::ExecuteTask(TArray<FBaseGraphTask*, TSizedDefaultAllocator<32> >&, ENamedThreads::Type) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/Core/Public/Async/TaskGraphInterfaces.h:847] 0x00007fdf3274366b libUE4Editor-Core.so!FNamedTaskThread::ProcessTasksNamedThread(int, bool) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/Core/Private/Async/TaskGraph.cpp:686] 0x00007fdf32742383 libUE4Editor-Core.so!FNamedTaskThread::ProcessTasksUntilQuit(int) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/Core/Private/Async/TaskGraph.cpp:582] 0x00007fdf2de43b96 libUE4Editor-RenderCore.so!FRHIThread::Run() [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/RenderCore/Private/RenderingThread.cpp:288] 0x00007fdf327d9c97 libUE4Editor-Core.so!FRunnableThreadPThread::Run() [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/Core/Private/HAL/PThreadRunnableThread.cpp:25] 0x00007fdf327a1530 libUE4Editor-Core.so!FRunnableThreadPThread::_ThreadProc(void*) [/home/xy/UnrealEngine_4.24/Engine/Source/Runtime/Core/Private/HAL/PThreadRunnableThread.h:177] 0x00007fdf332986db libpthread.so.0!UnknownFunction(0x76da) 0x00007fdf29e2f71f libc.so.6!clone(+0x3e)
+
+	possible solution: https://answers.unrealengine.com/questions/870814/ue4editor-crashing-on-ubuntu-1804.html

@@ -3,8 +3,10 @@
 2. 尝试将百度Apollo在CARLA中使用起来
 首先训练真实的行人, 汽车AI模型，尽可能复现真实环境中行人和汽车的行为。模型有一系列的情绪参数，比如遵守规则、暴躁、易变、行动目标等，随机生成参数放入simulator里。
 
+# 资讯
 [Brief history](https://www.unrealengine.com/zh-CN/spotlights/carla-democratizes-autonomous-vehicle-r-d-with-free-open-source-simulator)
 
+MATLAB的[RoadRunner](https://zhuanlan.zhihu.com/p/165376866)构建自动驾驶场景。
 # Paper Review
 [CARLA: An Open Urban Driving Simulator](http://proceedings.mlr.press/v78/dosovitskiy17a/dosovitskiy17a.pdf)
 
