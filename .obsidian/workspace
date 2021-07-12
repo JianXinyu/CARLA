@@ -1,0 +1,110 @@
+{
+  "main": {
+    "id": "76ab17e3e179b093",
+    "type": "split",
+    "children": [
+      {
+        "id": "267683b35cb8b338",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "Usage.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "30c43ae935ed61c4",
+    "type": "split",
+    "children": [
+      {
+        "id": "2a70948519df5813",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e603d98a48382fab",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "93744a9d14dfcaa5",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "972ee5f44a496a2e",
+    "type": "split",
+    "children": [
+      {
+        "id": "3c5db2d02f2bde41",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "69cd01f97fb36d9c",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Usage.md",
+                "collapseAll": true,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "053efe2ecba9dd5a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Usage.md"
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "267683b35cb8b338",
+  "lastOpenFiles": [
+    "Usage.md",
+    "Installation.md",
+    "README.md",
+    "Introduction.md",
+    "Untitled.md",
+    "CARLA An Open Urban Driving Simulator.pdf",
+    "architecture.png"
+  ]
+}
