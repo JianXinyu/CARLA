@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "Installation.md",
+            "file": "Usage.md",
             "mode": "source"
           }
         }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Installation.md",
+                "file": "Usage.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -85,7 +85,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Installation.md"
+                "file": "Usage.md"
               }
             }
           }
@@ -99,14 +99,15 @@
   },
   "active": "267683b35cb8b338",
   "lastOpenFiles": [
-    "Installation.md",
+    "Usage.md",
     "Traffic Manager.md",
-    "README.md",
-    "TODO.md",
+    "Troubleshooting.md",
     "Introduction.md",
     "Untitled.md",
-    "Usage.md",
-    "CARLA An Open Urban Driving Simulator.pdf",
-    "architecture.png"
+    "TODO.md",
+    "README.md",
+    "Installation.md",
+    "figures/architecture.png",
+    "CARLA An Open Urban Driving Simulator.pdf"
   ]
 }
