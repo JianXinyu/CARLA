@@ -28,13 +28,15 @@ Client-Server Architecture: Server建立仿真世界，Client由用户控制，�
 `commands`系列methods提供了一些常用methods的变种，可以用于`apply_batch(), apply_batch_sync()`批处理函数。Python API 文档[末尾](https://carla.readthedocs.io/en/0.9.11/python_api/#commandapplyangularimpulse)列出了所有的`commands`系列methods。
 
 #### World
-**world** is an object representing the simulation. 每个仿真环境只能有一个世界。
-- 
-- 改变weather
-- 获得仿真世界的信息。
-Every world object has an `id` or episode. client每次调用`load_world(), reload_world()`时，都会destroy old world，但UE不会reboot
+**world** is an object representing the simulation. 每个仿真环境只能有一个世界, 可以随时更改。Every world object has an `id` or episode. client每次调用`load_world(), reload_world()`时，都会destroy old world，但UE不会reboot
+Python API [carla.World](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.World)
+- world包含了asset，而不是navigation map，后者属于`carla.Map` class
+- 配置actors, weather, light
+- debugging 仿真时绘制图形 [carla.DebugHelper](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.DebugHelper)
+- snapshots, 给出A [carla.WorldSnapshot](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.WorldSnapshot) contains a [carla.Timestamp](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Timestamp) and a list of [carla.ActorSnapshot](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.ActorSnapshot).
+- [carla.WorldSettings](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.WorldSettings)
 
-
+每个仿真都会先做这两步: 
 1. client creation `carla.Client(), set_timeout()`
 2. world connection: `get_world(), load_world(), reload_world()`
 
