@@ -7,6 +7,8 @@
 [Brief history](https://www.unrealengine.com/zh-CN/spotlights/carla-democratizes-autonomous-vehicle-r-d-with-free-open-source-simulator)
 
 MATLAB的[RoadRunner](https://zhuanlan.zhihu.com/p/165376866)构建自动驾驶场景。
+
+ [C4 model](https://c4model.com/#References) for visualising software architecture
 # Paper Review
 [CARLA: An Open Urban Driving Simulator](http://proceedings.mlr.press/v78/dosovitskiy17a/dosovitskiy17a.pdf)
 
@@ -36,7 +38,6 @@ CARLA(CAR Learning to Act)是什么? an open-source simulator to support *develo
 	- [[#Modular pipeline]]
 	- [[#Imitation Learning]]
 	- [[#Reinforcement Learing]]
-
 
 ## Simulation Engine
 底层使用虚幻4进行渲染和物理仿真。

@@ -100,13 +100,13 @@
   "active": "267683b35cb8b338",
   "lastOpenFiles": [
     "Usage.md",
-    "Traffic Manager.md",
     "Troubleshooting.md",
-    "Introduction.md",
-    "Untitled.md",
-    "TODO.md",
-    "README.md",
     "Installation.md",
+    "Introduction.md",
+    "README.md",
+    "TODO.md",
+    "Traffic Manager.md",
+    "Untitled.md",
     "figures/architecture.png",
     "CARLA An Open Urban Driving Simulator.pdf"
   ]
