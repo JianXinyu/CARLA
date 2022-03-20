@@ -151,60 +151,209 @@ ego_vehicle.destroy()
 client.apply_batch([carla.command.DestroyActor(x) for x in actor_list])
 ```
 ## 3. Maps and navigation
-
 **The map** is the object representing the simulated world, the town mostly. 
-目前有8个地图[^2]。map包括城镇的 3D 模型及其道路定义，采用 OpenDRIVE 1.4 standard。[OpenDRIVE](https://www.asam.net/standards/detail/opendrive/)是一种文件格式，描述道路（网)的标准。
+
+目前有8个城镇地图[^2]。
+-   Town01：基本城镇，T型路口
+-   Town02：类似Town01，更小
+-   Town03：复杂城镇，5车道路口，环路，坡道，隧道
+-   Town04：高速路和小镇的循环道路
+-   Town05：带有交叉路口和桥的格子小镇。每个方向有多条车道，适合验证变道
+-   Town06：长高速路，出入匝道
+-   Town07：乡村环境，道路狭窄，少信号灯
+-   Town10：高清城市环境
+
+每个城镇有2种地图，即非分层地图和分层地图（后缀_Opt）。分层地图可以通过 PythonAPI 切换图层可见性。
+```python
+# Load layerred map for Town01 with minimum layout plus buildings and parked vehicles
+time.sleep(3)
+world = client.load_world('Town01_Opt', carla.MapLayer.Buildings | carla.MapLayer.ParkedVehicles)
+
+# Toggle all buildings off
+time.sleep(3)
+world.unload_map_layer(carla.MapLayer.Buildings)
+
+# Toggle all buildings on
+time.sleep(3)
+world.load_map_layer(carla.MapLayer.Buildings)
+```
+图层包含这些分组：
+-   NONE 无
+-   Buildings 建筑
+-   Decals 贴花
+-   Foliage 植被
+-   Ground 地面
+-   ParkedVehicles 停靠的车辆
+-   Particles 粒子
+-   Props 杂物
+-   StreetLights 路灯
+-   Walls 墙体
+-   All 所有
+
+map包括城镇的 3D 模型及其道路定义，采用 OpenDRIVE 1.4 standard。[OpenDRIVE](https://www.asam.net/standards/detail/opendrive/)是一种文件格式，描述道路（网)的标准。
 
 改变map，就是改变world。两种方式：`reload_world()`, `load_world()`
+```python
+# 加载地图
+world = client.load_world('Town01')
+# world = client.reload_world()
+# 获取可用地图列表
+print(client.get_available_maps())
+```
 
 map包括以下四种要素:
-- Landmarks: 即OpenDRIVE 文件中的交通标志。与之有关的类：[carla.Landmark](https://carla.readthedocs.io/en/latest/python_api/#carla.Landmark),  [carla.Waypoint](https://carla.readthedocs.io/en/latest/python_api/#carla.Waypoint),  [carla.Map](https://carla.readthedocs.io/en/latest/python_api/#carla.Map), [carla.World](https://carla.readthedocs.io/en/latest/python_api/#carla.World)
-- Lanes: [carla.LaneType](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.LaneType), carla.LaneMarking, carla.LaneMarkingType, carla.LaneMarkingColor
-- Junctions:  [carla.Junction](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Junction)
-- Waypoints: [carla.Waypoint](https://carla.readthedocs.io/en/latest/python_api/#carla.Waypoint)
 
-`map = world.get_map()`只需要调用一次。Map很大，连续调用既不必要又昂贵。
-Navigation是通过 waypoint API 来管理的，包括[carla.Waypoint](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Waypoint) and [carla.Map](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Map)中的methods
+### Landmarks
+即OpenDRIVE 文件中的交通标志。与之有关的类：
+- [carla.Landmark](https://carla.readthedocs.io/en/latest/python_api/#carla.Landmark)：对应 OpenDRIVE 的 signals
+	- carla.LandmarkOrientation：根据道路的几何形状定义地标的方向
+	- carla.LandmarkType：地标类型
+- [carla.Map](https://carla.readthedocs.io/en/latest/python_api/#carla.Map) 可以查询地图中的所有地标，或者某一类型的地标
+- [carla.World](https://carla.readthedocs.io/en/latest/python_api/#carla.World) 是 landmarks, carla.TrafficSign, carla.TrafficLight 的载体
+```python
+map = world.get_map()
+print(map)
+waypoints = map.generate_waypoints(100000)
+print(waypoints)
+waypoint = waypoints[4]
+print(waypoint)
+landmarks = waypoint.get_landmarks(20000.0, True)
+print(landmarks)
+```
+### Lanes
+[carla.LaneType](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.LaneType), carla.LaneMarking, 
+- carla.LaneMarkingType OpenDRIVE 的类型枚举
+- carla.LaneMarkingColor 标记颜色的枚举
+- width 标记的厚度
+- carla.LaneChange 声明执行车道更改的权限
+```python
+# Get the lane type where the waypoint is
+lane_type = waypoint.lane_type
+print(lane_type)
+
+# Get the type of lane marking on the left
+left_lanemarking_type = waypoint.left_lane_marking.type
+print(left_lanemarking_type)
+
+# Get available lane changes for this waypoint
+lane_change = waypoint.lane_change
+print(lane_change)
+```
+### Junctions
+[carla.Junction](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Junction)对应 OpenDRIVE junction。提供了一个边界框，描述其中车道和车辆的状态。为路口的每个车道返回一对waypoints，每对位于交界处的起点和终点。
+```python
+# 获取路口
+junction = waypoint.get_junction()
+print(junction)
+
+# 获取路口范围的航路点
+waypoints_junc = junction.get_waypoints(carla.LaneType.Any)
+print(waypoints_junc)
+```
+### Waypoint
+[carla.Waypoint](https://carla.readthedocs.io/en/latest/python_api/#carla.Waypoint)是 3D方向点。关联 world 和 OpenDRIVE。
+
+waypoint包含了 carla.Transform和其他lane的信息。 
+
+### Environment Objects
+### Navigation
+`map = world.get_map()`只需要调用一次。map很大，连续调用既不必要又昂贵。
+
+Navigation是通过 waypoint API 来管理的，包括：
+- [carla.Waypoint](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Waypoint)得到waypoint，然后设置vehicle的位置。涉及到的methods有:
+	-   next(d)：创建沿车道方向 d 距离的waypoint列表
+	-   previous(d)：创建沿车道反方向 d 距离的waypoint列表
+	-   next_until_lane_end(d), previous_until_lane_start(d)：返回从车道起点或终点相距 d 的waypoint列表
+	-   get_right_lane(), get_left_lane()：返回相邻车道的等效waypoint，可以用于进行换道操作
+- [carla.Map](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Map)得到waypoint(s), 将模拟点转换为地理坐标, 保存道路信息
+
 ## 4th- Sensors and data
-
-**Sensors** wait for some event to happen, and then gather data from the simulation. They call for a function defining how to manage the data. Depending on which, sensors retrieve different types of **sensor data**.
-
-A sensor is an actor attached to a parent vehicle. It follows the vehicle around, gathering information of the surroundings. The sensors available are defined by their blueprints in the.
-
--   Cameras (RGB, depth and semantic segmentation).
--   Collision detector.
--   Gnss sensor.
--   IMU sensor.
--   Lidar raycast.
--   Lane invasion detector.
--   Obstacle detector.
--   Radar.
--   RSS.
-
-Sensor是一种特殊的Actor，它的蓝图也是可以在蓝图库里边找到的，目前Carla已经支持了很多传感器，比如
-
+**Sensors** wait for some event to happen, and then gather data from the simulation. 
 -   摄像头： Depth， RGB ， Semantic segmentation
 -   探测器： Collision ， Lane invasion ， Obstacle
 -   其他： GNSS ， IMU ， LIDAR raycast ， Radar
 
-传感器跟其他的Actor最大的不同是，它们需要被安装在车上，因此在生成传感器的时候，需要将其附着到一个车辆类型的Actor上，而出生点是针对于这台车本身的坐标系给定的。
+每种sensor详细请见[Sensor reference](https://carla.readthedocs.io/en/0.9.11/ref_sensors/)
+[carla.Sensor](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.Sensor)
+- 数据类型继承自[carla.SensorData](https://carla.readthedocs.io/en/0.9.11/python_api/#carla.SensorData).
+- 何时获取数据? 在每个模拟步骤或在某个事件发生时
+- 如何获取数据？`listen()` method
 
+1. setting: 获取blueprint，set_attribute(image resolution, field of view(`fov`), `sensor_tick`, etc)
+2. spawning: attach(见下文)
+3. listening: 定义callback函数
 
+**Sensors should be attached to a parent actor**, usually a vehicle. `attachment_to`位置是相对parent actor而言的。  `attachment_type`有两种:
+- Rigid attachment 通常用这种
+- SpringArm attachment 仅推荐用于记录作用的录像
+
+Example: Camera
 ```python
-camera_bp = world.get_blueprint_library().find('sensor.camera.rgb')
-camera = world.spawn_actor(camera_bp, 
-                           carla.Transform(carla.Location(x=-5.5, z=2.5), carla.Rotation(pitch=8.0)), 
-                           model3,
-                           carla.AttachmentType.SpringArm
-                           )
-camera.listen(lambda image:image.save_to_disk('output/%06d.png' % image.frame)
+# add a camera
+camera_bp = blueprint_library.find('sensor.camera.rgb')
+# set attribute
+camera_bp.set_attribute('image_size_x', '1920')
+camera_bp.set_attribute('image_size_y', '1080')
+camera_bp.set_attribute('fov', '110')
+# camera relative position related to the vehicle
+camera_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
+camera = world.spawn_actor(camera_bp, camera_transform, attach_to=ego_vehicle)
+
+output_path = '../outputs/output_basic_api'
+if not os.path.exists(output_path):
+	os.makedirs(output_path)
+
+# set the callback function
+camera.listen(lambda image: image.save_to_disk(os.path.join(output_path, '%06d.png' % image.frame)))
+sensor_list.append(camera)
+```
+# Synchrony and time-step
+ref[^4][^5]
+## Simulation time-step
+Simulation没有现实中的时间概念，而是步长Time-step，两次仿真的间隔。有两种
+- Variable time-step: default mode，尽可能快地运行
+- Fixed time-step: the elapsed time remains constant between steps.
+```python
+############# Variable ###############
+settings = world.get_settings() 
+settings.fixed_delta_seconds = None # Set a variable time-step world.apply_settings(settings)
+# 也可以通过PythonAPI/util/config.py配置
+cd PythonAPI/util && python3 config.py --delta-seconds 0
+
+############# Fixed ##################
+settings = world.get_settings() 
+settings.fixed_delta_seconds = 0.05 
+world.apply_settings(settings)
+# 也可以通过PythonAPI/util/config.py配置
+cd PythonAPI/util && python3 config.py --delta-seconds 0.05
+```
+### Client-server synchrony
+- **asynchronous mode**: server会尽可能跑得快，不管client。如果client过慢，可能导致server跑了三次，client才跑完一次
+- **synchronous mode**: server会等待client完成的信号，再进行下一步模拟
+
+开启同步模式：
+```python
+settings = world.get_settings() 
+settings.synchronous_mode = True # Enables synchronous mode world.apply_settings(settings)
+```
+**Note**: 开启同步模式时，也要设置Traffic manager为同步模式。同步模式必须用fixed time-step。**与GPU相关的sensors, 如camera，必须用同步模式**
+
+关闭同步模式:
+也可用script，但script无法开启。
+```bash
+cd PythonAPI/util && python3 config.py --no-sync # Disables synchronous mode
 ```
 
-我们在上段代码中，首先从蓝图库中找到RGB摄像头模板，然后利用这个蓝图生成摄像头Actor，并将其附着到前边生成好的Model 3上，我们选择了摄像头附着类型为：carla.AttachmentType.SpringArm，并将其位置设置到后方，这样我们就可以像从一个第三者的角度排到行驶的车辆了，在文章最后，读者可以看到摄像头拍到的车辆的照片。
 
-每一个传感器都有一个listen方法，该方法接收一个callback作为参数，我们可以自定义callback里边的逻辑，callback将会在传感器拿到数据后被调用，并能够获取到这些数据。我们这个例子中，我们将摄像头采集到的图像信息以图片的形式保存在output文件夹中。
+|                   | Fixed time-step                                                        | Variable time-step                 |
+| ----------------- | ---------------------------------------------------------------------- | ---------------------------------- |
+| Synchronous mode  | 最常用，client主导| 几乎不用  |
+| Asynchronous mode | Good time references for information. Server runs as fast as possible. | Non easily repeatable simulations. |
 
-跟其他Actor一样的，传感器也有很多参数可以设置，比如对于RBG摄像头来说，我们可以设置其采集的分辨率。
+carla simulation默认模式为异步模式+variable time-step
 
 [^1]: 史上最全Carla教程 |（三）基础API的使用 https://zhuanlan.zhihu.com/p/340031078
 [^2]: at the bottom of this page https://carla.readthedocs.io/en/0.9.11/core_map/
+[^3]:https://zhuanlan.zhihu.com/p/367491650
+[^4]: https://carla.readthedocs.io/en/0.9.11/adv_synchrony_timestep/
+[^5]: https://zhuanlan.zhihu.com/p/341521023
